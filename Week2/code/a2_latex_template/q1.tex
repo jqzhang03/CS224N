@@ -51,6 +51,12 @@ Prove that the naive-softmax loss (Equation \ref{naive-softmax}) is the same as 
 
 Your answer should be one line. You may describe your answer in words.
 
+\ifans{
+    该经验分布是一个大部分为0的向量，只有在outside的地方才为1，也就是意味着：
+    $$
+    -\sum_{w \in \text{Vocab}} \by_w \log(\hat{\by}_w) = - \sum_{w \neq o} 0 \cdot \log(\hat{\by}_w) - \sum_{w = o} 1 \cdot \log(\hat{\by}_w) = - \log (\hat{\by}_o).
+    $$
+}
 
 % Question 1-B
 \part[6]
@@ -69,7 +75,26 @@ Your answer should be one line. You may describe your answer in words.
 
 \end{enumerate}
 
-
+\ifans{
+    \begin{enumerate}[label=\roman*.]
+        \item 
+        \begin{align}
+            \frac{\partial}{\partial \bv_c} \bJ_{\text{naive-softmax}}(\bv_c, o, \bU)
+            &= \frac{\partial}{\partial \bv_c} [-\log(\exp(\bu_{o}^\top \bv_c)) + \log(\sum_{w \in \text{Vocab}} \exp(\bu_{w}^\top \bv_c))] \\
+            &= \frac{\partial}{\partial \bv_c} [-\bu_{o}^\top \bv_c + \log(\sum_{w \in \text{Vocab}} \exp(\bu_{w}^\top \bv_c))] \\
+            &= -\bu_{o} + \frac{1}{\sum_{w \in \text{Vocab}} \exp(\bu_{w}^\top \bv_c)}\frac{\partial}{\partial \bv_c}\sum_{w \in \text{Vocab}}\exp(\bu_{w}^\top \bv_c) \\
+            &= -\bu_{o} + \frac{1}{\sum_{w \in \text{Vocab}} \exp(\bu_{w}^\top \bv_c)}\cdot \sum_{w' \in \text{Vocab}} \exp(\bu_{w'}^\top \bv_c)\cdot \bu_{w'} \\
+            &= -\bu_{o} + \sum_{w' \in \text{Vocab}} \frac{\exp(\bu_{w}^\top \bv_c)}{\sum_{w \in \text{Vocab}} \exp(\bu_{w}^\top \bv_c)} \cdot \bu_{w'} \\
+            &= -\bu_{o} + \sum_{w' \in \text{Vocab}} \hat{\by}_{w'} \cdot \bu_{w'} \\
+            &= -\bu_{o} + \bU\hat{\by} \\
+            &= -\bU\by + \bU\hat{\by} \\
+            &= \bU(\hat{\by} - \by)
+        \end{align}
+        \item 根据求得的等式，当$\hat{\by} = \by$时梯度为0；根据矩阵的计算方式，当$(\hat{\by}-\by)$位于矩阵$\bU$的零空间时，梯度也为0
+        \item 根据定义的更新规则$\theta = \theta - \alpha \frac{\partial \bJ(\theta)}{\partial \theta}$，也就是$\bv_{c}^{\text{new}} = \bv_{c}^{\text{old}} - \alpha\bU \hat{\by} + \alpha\bU \by$，$\alpha$指的是学习率，$\bv_{c}$加上$\alpha \bU \by$使得$\bv_{c}$向$\bu_o$的方向移动，
+        也就是加强窗口内单词的向量对于单词c的向量的影响，而减去$\alpha \bU \hat{\by}$是使得$\bv_c$远离$\bU$中的其他向量
+    \end{enumerate}
+}
 
 % Question 1-C
 \part[1]
@@ -77,16 +102,40 @@ In many downstream applications using word embeddings, L2 normalized vectors (e.
 
 \textbf{Hint:} Consider the case where $\mathbf{u}_x = \alpha\mathbf{u}_y$ for some words $x \neq y$ and some scalar $\alpha$. When $\alpha$ is positive, what will be the value of normalized  $\mathbf{u}_x$ and normalized $\mathbf{u}_y$? How might $\mathbf{u}_x$ and $\mathbf{u}_y$ be related for such a normalization to affect or not affect the resulting classification?
 
+\ifans{
+    当向量的大小表示词频或者词的重要性时，L2归一化会把所有向量的长度都标准化为1，那么原始向量的长度信息就会丢失，使得性能低下。
+    在某些任务中，仅仅只需要向量的方向时，词向量的方向比其大小要更加重要，L2归一化把长度都标准化为1，就可以去除向量长度对结果的影响，使模型更专注于词的含义等。
+}
 
 % Question 1-D
 \part[5] 
 Compute the partial derivatives of $\bJ_{\text{naive-softmax}}(\bv_c, o, \bU)$ with respect to each of the `outside' word vectors, $\bu_w$'s. There will be two cases: when $w=o$, the true `outside' word vector, and $w \neq o$, for all other words. Please write your answer in terms of $\by$, $\hat{\by}$, and $\bv_c$. In this subpart, you may use specific elements within these terms as well (such as $\by_1$, $\by_2$, $\dots$). Note that $\bu_w$ is a vector while $\by_1, \by_2, \dots$ are scalars. Show your work to receive full credit.
 
-
+\ifans{
+    \begin{align}
+        \frac{\partial}{\partial \bu_w} \bJ_{\text{naive-softmax}}(\bv_{c}, o, \bU)
+        &= \frac{\partial}{\partial \bu_w} [- \log \exp(\bu_{o}^\top \bv_c) + \log \sum_{w \in \text{Vocab}} \exp(\bu_{w}^\top \bv_c)] \\
+        &= - \frac{\partial \bu_{o}^\top \bv_c}{\partial \bu_w} + \frac{1}{\sum_{w' \in \text{Vocab}} \exp(\bu_{w'}^\top \bv_c)} \cdot \exp(\bu_{w}^\top \bv_c) \cdot \bv_c \\
+        &= - \frac{\partial \bu_{o}^\top \bv_c}{\partial \bu_w} + \hat{\by_{w}}\cdot \bv_c \\
+        &= \begin{cases}
+            (\hat{\by_{w}} - 1)\bv_c & \text{, if } w = o \\
+            \hat{\by_{w}}\bv_c & \text{, otherwise}
+        \end{cases}
+    \end{align}
+}
 
 % Question 1-E
 \part[1]
 Write down the partial derivative of $\bJ_{\text{naive-softmax}}(\bv_c, o, \bU)$ with respect to $\bU$. Please break down your answer in terms of the column vectors $\frac{\partial \bJ(\bv_c, o, \bU)}{\partial \bu_1}$, $\frac{\partial \bJ(\bv_c, o, \bU)}{\partial \bu_2}$, $\cdots$, $\frac{\partial \bJ(\bv_c, o, \bU)}{\partial \bu_{|\text{Vocab}|}}$. No derivations are necessary, just an answer in the form of a matrix.
 
+\ifans{
+    \begin{align}
+        \frac{\partial}{\partial \bU} \bJ_{\text{naive-softmax}}(\bv_{c}, o, \bU)
+        &= \begin{bmatrix}
+            \hat{\by}_{1} \bv_c & \hat{\by}_{2} \bv_c & ... & (\hat{\by}_{o} - 1) \bv_c & ... & \hat{\by}_{|\text{Vocab}|} \bv_c
+        \end{bmatrix}\\
+        &= (\hat{\by} - \by)^\top \bv_{c}
+    \end{align}
+}
 
 \end{parts}
