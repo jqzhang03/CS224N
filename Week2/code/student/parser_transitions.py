@@ -33,8 +33,9 @@ class PartialParse(object):
         ### Note: If you need to use the sentence object to initialize anything, make sure to not directly 
         ###       reference the sentence object.  That is, remember to NOT modify the sentence object. 
 
-
-        ### END YOUR CODE
+        self.stack: list[str] = ["ROOT"]
+        self.buffer: list[str] = sentence.copy()
+        self.dependencies: list[tuple[str, str]] = []
 
 
     def parse_step(self, transition):
@@ -52,6 +53,14 @@ class PartialParse(object):
         ###         2. Left Arc
         ###         3. Right Arc
 
+        if transition == "S":
+            self.stack.append(self.buffer.pop(0))
+        elif transition == "LA":
+            self.dependencies.append((self.stack[-1], self.stack.pop(-2)))
+        elif transition == "RA":
+            self.dependencies.append((self.stack[-2], self.stack.pop(-1)))
+        else:
+            raise ValueError("transition must be \"S\", \"LA\", \"RA\"")
 
         ### END YOUR CODE
 
@@ -103,6 +112,23 @@ def minibatch_parse(sentences, model, batch_size):
     ###             to remove objects from the `unfinished_parses` list. This will free the underlying memory that
     ###             is being accessed by `partial_parses` and may cause your code to crash.
 
+    def _is_terminated(partial_parse: PartialParse) -> bool:
+        if len(partial_parse.stack) == 1 and len(partial_parse.buffer) == 0:
+            return True
+        else:
+            return False
+    
+    partial_parses = [PartialParse(sentence) for sentence in sentences]
+    unfinished_parses = partial_parses[:]
+    while len(unfinished_parses) > 0:
+        minibatch = unfinished_parses[:batch_size]
+        transitions = model.predict(minibatch)
+        for partial_parse, transition in zip(minibatch, transitions):
+            partial_parse.parse_step(transition)
+            if _is_terminated(partial_parse):
+                unfinished_parses.remove(partial_parse)
+
+    dependencies = [partial_parse.dependencies for partial_parse in partial_parses]
 
     ### END YOUR CODE
 

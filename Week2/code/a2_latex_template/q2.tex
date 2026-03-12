@@ -31,6 +31,14 @@
            
                 
                 \end{subparts}
+                \ifans{
+                    \begin{enumerate}[label=\roman*.]
+                        \item 通过累积过去的梯度值，会让当前的参数变化更加平滑，这种方法能够减少因噪声梯度而导致的参数变化，
+                        并减少梯度方向波动时的震荡程度，momentum有助于保持参数更新的速度，防止学习陷入平台期或局部最小值。
+                        \item 在梯度中存在较小的非中心值的参数会得到更大的更新。除了使用一成不变的学习率，$/ \sqrt{\bv}$使得学习率能够适应不同的参数，
+                        这会让参数更新更加平滑，避免一下子更新过多错过了最优点，或者让每次梯度变化小的参数能够更快地更新。
+                    \end{enumerate}
+                }
         
         
             \part[4] 
@@ -51,6 +59,33 @@
             
           \subpart[2] Why should dropout be applied during training? Why should dropout \textbf{NOT} be applied during evaluation? \textbf{Hint:} it may help to look at the dropout paper linked. \newline
           
+          \ifans{
+                \begin{enumerate}[label=\roman*.]
+                    \item 
+                    \begin{align}
+                        \mathbb{E}_{p_{\text{drop}}}[\bh_\text{drop}]_i 
+                        &= \mathbb{E}_{p_{\text{drop}}}[\gamma \bd \odot \bh_{i}] \\
+                        &= \gamma \bh_{i} \mathbb{E}_{p_\text{drop}}[\bd] \\
+                        &= \gamma \bh_{i} [0 \times p_{\text{drop}} + 1 \times (1 - p_{\text{drop}})] \\
+                        &= \gamma \bh_{i} (1 - p_{\text{drop}}) \\
+                        &= \bh_{i}
+                    \end{align}
+                    $$
+                        \gamma \bh_{i} (1 - p_{\text{drop}}) = \bh_{i}
+                    $$
+                    $$
+                        \gamma = \frac{1}{1 - p_{\text{drop}}}
+                    $$
+                    要让$\bh_{\text{drop}}$的期望等于$\bh$，那么根据前面的描述我们知道，某神经元被drop的概率是$p_{\text{drop}}$，也就是说
+                    在该位置为0的概率也就是$p_{\text{drop}}$，同理可得该位置为1的概率，那么就可以得到这个位置的期望$\mathbb{E}_{p_{\text{drop}}}[\cdot]_{i}$。
+                    \item 在训练过程中使用dropout可以防止过拟合，避免在训练过程中过度依赖于某些神经元的学习，
+                    通过dropout来消去一部分神经元的作用，可以让其他神经元更好地学习数据的特征，同时也训练了更多不同的子神经网络，
+                    使得神经网络具有更强地学习能力和鲁棒性。
+                    
+                    在评估的时候不使用dropout，是为了在评估的时候能够充分利用神经网络的能力，从其生成的结果和标准答案之间的不同，来判断当前神经网络的参数效果如何
+                    测试的时候不需要进行额外的操作，可以加快推理速度。
+                \end{enumerate}
+          }
          
         \end{subparts}
 
