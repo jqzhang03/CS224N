@@ -1,10 +1,10 @@
 # Fdb version 4
-["xdvipdfmx"] 1773199257.17739 "main.xdv" "main.pdf" "main" 1773199257.54404 0
-  "main.xdv" 1773199257.13092 508388 671c75e8c6b7d202fa64839273a0249c "xelatex"
+["xdvipdfmx"] 1773713657.45691 "main.xdv" "main.pdf" "main" 1773713658.0911 0
+  "main.xdv" 1773713657.41013 524592 399d54b7ba0f052aa0706eb7a4f7b132 "xelatex"
   (generated)
   "main.pdf"
   (rewritten before read)
-["xelatex"] 1773199255.42248 "/Users/zhangjinqi/Desktop/acm/learn/CS224N/Week2/code/a2_latex_template/main.tex" "main.xdv" "main" 1773199257.5425 0
+["xelatex"] 1773713655.881 "/Users/zhangjinqi/Desktop/acm/learn/CS224N/Week2/code/a2_latex_template/main.tex" "main.xdv" "main" 1773713658.08955 0
   "/System/Library/Fonts/Menlo.ttc" 1756454353 2156036 ec05dfca6821d85440da0899493002c3 ""
   "/Users/zhangjinqi/Desktop/acm/learn/CS224N/Week2/code/a2_latex_template/main.tex" 1772958125.77192 5798 c5358a0dfe88c6eff25e2d2c5437edf9 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -266,13 +266,14 @@
   "/usr/local/texlive/2025/texmf.cnf" 1741450484 577 418a7058ec8e006d8704f60ecd22c938 ""
   "dep_parses.tex" 1712676198 3041 ceeb222f2d16df528c23e109e4f18834 ""
   "example.png" 1712676198 111746 d5989e276dca79a0b2e5e84effcf2ff8 ""
+  "images/1.png" 1773649345.18313 562471 951fed0e0397f9557ac2ae17d700eec0 ""
   "macros.tex" 1712676198 660 0aa7caf33ddb384446099d7bcd0f954b ""
-  "main.aux" 1773199257.13005 3383 842c2e7db3d22469ca8d4d3c7921b9bf "xelatex"
-  "main.out" 1773199256.11979 0 d41d8cd98f00b204e9800998ecf8427e "xelatex"
+  "main.aux" 1773713657.40929 3383 c2054bf9e0cb656984ac0c1484dfb8f8 "xelatex"
+  "main.out" 1773713656.49056 0 d41d8cd98f00b204e9800998ecf8427e "xelatex"
   "main.tex" 1772958125.77192 5798 c5358a0dfe88c6eff25e2d2c5437edf9 ""
   "q1.tex" 1772981996.7105 11613 ca7181e97cffd905ed98f5786e8bd0e2 ""
   "q2.tex" 1773106741.46671 7269 7cbeabfd6f4f59d0e16f0c592611b252 ""
-  "q3.tex" 1773199255.18269 20839 fd591200aea8269fe1662adcf5f02e0c ""
+  "q3.tex" 1773713655.71711 23681 abeaab8ad7fbf971ed9e885db94d9768 ""
   "std_macros.tex" 1712676198 11204 3ccbe10995adf29e39fb6e628340946b ""
   "submission.tex" 1712676198 514 ec4c5cdfe34eedb367d80bc0b40c3bc9 ""
   "word2vec.png" 1712676198 57482 4e86e40dc0521b52102d63df05b4a9fb ""

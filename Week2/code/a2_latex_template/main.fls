@@ -506,6 +506,9 @@ INPUT q3.tex
 INPUT ./example.png
 INPUT ./example.png
 INPUT ./example.png
+INPUT ./images/1.png
+INPUT ./images/1.png
+INPUT ./images/1.png
 INPUT ./dep_parses.tex
 INPUT ./dep_parses.tex
 INPUT dep_parses.tex

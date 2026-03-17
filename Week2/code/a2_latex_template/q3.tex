@@ -165,6 +165,18 @@ On each step, your parser will decide among the three transitions using a neural
             \item \textbf{Report the best UAS your model achieves on the dev set and the UAS it achieves on the test set in your written submission}.
     \end{itemize}
     \end{enumerate}
+    \ifans{
+    \begin{adjustwidth}{}{}
+        \begin{tabular}{ l | l}
+        dev UAS & test UAS \\ \hline
+        88.80 & 89.27
+        \end{tabular}\newline
+        \end{adjustwidth}
+        \begin{figure}[htbp]
+            \centering 
+            \includegraphics[width=0.8\textwidth]{./images/1.png} 
+        \end{figure}
+    }
     
     
 \part[12] We'd like to look at example dependency parses and understand where parsers like ours might be wrong. For example, in this sentence:
@@ -210,10 +222,14 @@ More generally, here are four types of parsing error:
     \item \textbf{Prepositional Phrase Attachment Error}: In the example above, the phrase \textit{into Afghanistan} is a prepositional phrase\footnote{For examples of prepositional phrases, see: https://www.grammarly.com/blog/prepositional-phrase/}.
     A Prepositional Phrase Attachment Error is when a prepositional phrase is attached to the wrong head word (in this example, \textit{troops} is the wrong head word and \textit{sent} is the correct head word).
     More examples of prepositional phrases include \textit{with a rock}, \textit{before midnight} and \textit{under the carpet}. 
+    \item 介词短语附着错误：在上面的例子当中，短语"into Afghanistan"是一个介词短语，该介词短语被错误地连接到了错误的中心词，这个例子的意思是莫斯科向阿富汗派遣军队，那么"into Afghanistan"是修饰动词"sent"的，而不是修饰军队"troops"
     \item \textbf{Verb Phrase Attachment Error}: In the sentence \textit{Leaving the store unattended, I went outside to watch the parade}, the phrase \textit{leaving the store unattended} is a verb phrase\footnote{For examples of verb phrases, see: https://examples.yourdictionary.com/verb-phrase-examples.html}. 
     A Verb Phrase Attachment Error is when a verb phrase is attached to the wrong head word (in this example, the correct head word is \textit{went}).
+    \item 动词短语附着错误：在本例当中，\textit{leaving the store unattended}意思是让商店无人看管，该动词短语被错误的连接到错误的中心词上，正确的中心词应该是\textit{went}。
     \item \textbf{Modifier Attachment Error}: In the sentence \textit{I am extremely short}, the adverb \textit{extremely} is a modifier of the adjective \textit{short}. A Modifier Attachment Error is when a modifier is attached to the wrong head word (in this example, the correct head word is \textit{short}).
+    \item 修饰语附着错误：该例子中，"extremely"是"short"的修饰语，修饰语附着错误指的就是一个修饰语被错误地连接到中心词上
     \item \textbf{Coordination Attachment Error}: In the sentence \textit{Would you like brown rice or garlic naan?}, the phrases \textit{brown rice} and \textit{garlic naan} are both conjuncts and the word \textit{or} is the coordinating conjunction. The second conjunct (here \textit{garlic naan}) should be attached to the first conjunct (here \textit{brown rice}). A Coordination Attachment Error is when the second conjunct is attached to the wrong head word (in this example, the correct head word is \textit{rice}). Other coordinating conjunctions include \textit{and}, \textit{but} and \textit{so}.
+    \item 并列附着错误：例子中短语"brown rice"和"garlic naan"都是并列成分，单词"or"是并列连词，第二个并列成分应该连接到第一个并列成分
 \end{itemize}
 In this question are four sentences with dependency parses obtained from a parser. Each sentence has one error type, and there is one example of each of the four types above. 
 For each sentence, state the type of error, the incorrect dependency, and the correct dependency. While each sentence should have a unique error type, there may be multiple possible correct dependencies for some of the sentences.
@@ -234,7 +250,42 @@ In particular, you \textbf{do not} need to look at the labels on the the depende
 
 \input{dep_parses.tex}
 
+\ifans{
+    \begin{enumerate}[label=\roman*.]
+        \item 
+        \begin{itemize}
+            \item \textbf{Error type}:Verb Phrase Attachment Error
+            \item \textbf{Incorrect dependency}:acquisition $\rightarrow$ citing
+            \item \textbf{Correct dependency}:blocked $\rightarrow$ citing
+        \end{itemize}
+        \item 
+        \begin{itemize}
+            \item \textbf{Error type}:Modifier Attachment Error
+            \item \textbf{Incorrect dependency}:elements $\rightarrow$ most
+            \item \textbf{Correct dependency}:crucial $\rightarrow$ most
+        \end{itemize}
+        \item 
+        \begin{itemize}
+            \item \textbf{Error type}:Prepositional Attachment Error
+            \item \textbf{Incorrect dependency}:declined $\rightarrow$ decision
+            \item \textbf{Correct dependency}:reasons $\rightarrow$ decision
+        \end{itemize}
+        \item 
+        \begin{itemize}
+            \item \textbf{Error type}:Coordination Attachment Error
+            \item \textbf{Incorrect dependency}:affects $\rightarrow$ one
+            \item \textbf{Correct dependency}:plants $\rightarrow$ one
+        \end{itemize}
+    \end{enumerate}
+}
 
 \part[2] Recall in part (e), the parser uses features which includes words and their part-of-speech (POS) tags. Explain the benefit of using part-of-speech tags as features in the parser?
+
+\ifans{
+
+    Part-of-speech(POS) tags为每一个单词都提供了有效的语法信息，让大模型能够更清楚地了解一段话的语义结构。
+    POS tags能够帮助大模型在不同的上下文中，理解每个单词的含义，即便一个单词可能存在多种意思。
+    通过加入上下文，可以提升解析器对名词、动词、介词、修饰词等语法的理解，进而提高解析效率。
+}
 
 \end{parts}

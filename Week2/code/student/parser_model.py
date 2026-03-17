@@ -73,8 +73,21 @@ class ParserModel(nn.Module):
         ### 
         ### See the PDF for hints.
 
+        ### 1)嵌入层输入的时候有n_features个词索引，那么将其进行嵌入拼接，得到n_features*embed_size维，
+        ### 需要将其映射到hidden_size维隐藏空间
+        self.embed_to_hidden_weight = nn.Parameter(torch.empty(n_features * self.embed_size, hidden_size))
+        self.embed_to_hidden_bias = nn.Parameter(torch.empty(hidden_size))
+        nn.init.xavier_uniform_(self.embed_to_hidden_weight)
+        nn.init.uniform_(self.embed_to_hidden_bias)
+        
+        ### 2)依据概率随机丢弃一些神经元
+        self.dropout = nn.Dropout(self.dropout_prob)
 
-
+        ### 3)隐藏层输入的时候是hidden_size维，需要映射到n_classes维，得到n_classes个类别的得分
+        self.hidden_to_logits_weight = nn.Parameter(torch.empty(hidden_size, n_classes))
+        self.hidden_to_logits_bias = nn.Parameter(torch.empty(n_classes))
+        nn.init.xavier_uniform_(self.hidden_to_logits_weight)
+        nn.init.uniform_(self.hidden_to_logits_bias)
 
         ### END YOUR CODE
 
@@ -107,7 +120,9 @@ class ParserModel(nn.Module):
         ###     View: https://pytorch.org/docs/stable/tensors.html#torch.Tensor.view
         ###     Flatten: https://pytorch.org/docs/stable/generated/torch.flatten.html
 
+        x = self.embeddings[w]
 
+        x = x.view(w.shape[0], -1)
 
         ### END YOUR CODE
         return x
@@ -144,6 +159,10 @@ class ParserModel(nn.Module):
         ###     Matrix product: https://pytorch.org/docs/stable/torch.html#torch.matmul
         ###     ReLU: https://pytorch.org/docs/stable/nn.html?highlight=relu#torch.nn.functional.relu
 
+        x = self.embedding_lookup(w)
+        h = F.relu(x @ self.embed_to_hidden_weight + self.embed_to_hidden_bias)
+        h = self.dropout(h)
+        logits = h @ self.hidden_to_logits_weight + self.hidden_to_logits_bias
 
         ### END YOUR CODE
         return logits
