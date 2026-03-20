@@ -65,14 +65,28 @@ class NMT(nn.Module):
         ### TODO - Initialize the following variables IN THIS ORDER:
         ###     self.post_embed_cnn (Conv1d layer with kernel size 2, input and output channels = embed_size,
         ###         padding = same to preserve output shape )
+        self.post_embed_cnn = nn.Conv1d(
+            in_channels = embed_size,
+            out_channels = embed_size,
+            kernel_size = 2,
+            padding = "same",
+        )
         ###     self.encoder (Bidirectional LSTM with bias)
+        self.encoder = nn.LSTM(input_size = embed_size, hidden_size = hidden_size, bidirectional = True)
         ###     self.decoder (LSTM Cell with bias)
+        self.decoder = nn.LSTMCell(input_size = embed_size + hidden_size, hidden_size = hidden_size)
         ###     self.h_projection (Linear Layer with no bias), called W_{h} in the PDF.
+        self.h_projection = nn.Linear(hidden_size * 2, hidden_size, bias = False)
         ###     self.c_projection (Linear Layer with no bias), called W_{c} in the PDF.
+        self.c_projection = nn.Linear(hidden_size * 2, hidden_size, bias = False)
         ###     self.att_projection (Linear Layer with no bias), called W_{attProj} in the PDF.
+        self.att_projection = nn.Linear(hidden_size * 2, hidden_size, bias = False)
         ###     self.combined_output_projection (Linear Layer with no bias), called W_{u} in the PDF.
+        self.combined_output_projection = nn.Linear(hidden_size * 3, hidden_size, bias = False)
         ###     self.target_vocab_projection (Linear Layer with no bias), called W_{vocab} in the PDF.
+        self.target_vocab_projection = nn.Linear(hidden_size, len(vocab.tgt), bias = False)
         ###     self.dropout (Dropout Layer)
+        self.dropout = nn.Dropout(p = dropout_rate)
         ###
         ### Use the following docs to properly initialize these variables:
         ###     Conv1d:
@@ -150,14 +164,38 @@ class NMT(nn.Module):
         ###     1. Construct Tensor `X` of source sentences with shape (src_len, b, e) using the source model embeddings.
         ###         src_len = maximum source sentence length, b = batch size, e = embedding size. Note
         ###         that there is no initial hidden state or cell for the encoder.
+        
+        # 获取输入句子序列的长度和批次大小
+        src_len, b = source_padded.shape
+        # 将输入的单词索引source_padded转换为稠密的向量表示X
+        # X的形状是(src_len, b, embed_size)
+        X = self.model_embeddings.source(source_padded)
+
         ###     2. Apply the post_embed_cnn layer. Before feeding X into the CNN, first use torch.permute to change the
         ###         shape of X to (b, e, src_len). After getting the output from the CNN, remember to use torch.permute
         ###         again to revert X back to its original shape.
+
+        # 调整X的维度，Conv1d期望的输入格式是(Batch, Channel, Length)
+        # X的维度是(Length, Batch, Channel)
+        X = X.permute(1, 2, 0)
+        # 先对词向量进行一维卷积，卷积完成后将维度还原回(Length, Batch, Channel)
+        X = self.post_embed_cnn(X).permute(2, 0, 1)
+
         ###     3. Compute `enc_hiddens`, `last_hidden`, `last_cell` by applying the encoder to `X`.
         ###         - Before you can apply the encoder, you need to apply the `pack_padded_sequence` function to X.
         ###         - After you apply the encoder, you need to apply the `pad_packed_sequence` function to enc_hiddens.
         ###         - Note that the shape of the tensor returned by the encoder is (src_len, b, h*2) and we want to
         ###           return a tensor of shape (b, src_len, h*2) as `enc_hiddens`.
+        
+        # 由于批次中句子长度不一，使用了padding补齐，将数据打包后告诉LSTM哪些是真实词，哪些是补充的0
+        X = pack_padded_sequence(X, source_lengths)
+        # 将数据送入LSTM，返回所有时间步的输出隐藏状态、最后一个时间步的隐藏状态和细胞状态
+        enc_hiddens, (last_hidden, last_cell) = self.encoder(X)
+        # 将LSTM的输出解包，恢复成带有padding的张量格式
+        enc_hiddens, src_lens = pad_packed_sequence(enc_hiddens)
+        # 将形状从(src_len, b, hidden_size*2)转换为(b, src_len, hidden_size*2)，符合后续注意力机制需要的(Batch, Seq_len, Hidden)格式
+        enc_hiddens = enc_hiddens.transpose(0, 1)
+        
         ###     4. Compute `dec_init_state` = (init_decoder_hidden, init_decoder_cell):
         ###         - `init_decoder_hidden`:
         ###             `last_hidden` is a tensor shape (2, b, h). The first dimension corresponds to forwards and backwards.
@@ -169,6 +207,14 @@ class NMT(nn.Module):
         ###             Concatenate the forwards and backwards tensors to obtain a tensor shape (b, 2*h).
         ###             Apply the c_projection layer to this in order to compute init_decoder_cell.
         ###             This is c_0^{dec} in the PDF. Here b = batch size, h = hidden size
+        
+        # h_projection和c_projection是两个全连接层，它们将拼接后的编码器状态映射到解码器所需要的隐藏层维度
+        # transpose(0, 1).reshape(b, -1)将编码器的最终状态展平，它把所有层、所有方向的隐藏状态拼接成一个长向量
+        init_decoder_hidden = self.h_projection(last_hidden.transpose(0, 1).reshape(b, -1))
+        init_decoder_cell = self.c_projection(last_cell.transpose(0, 1).reshape(b, -1))
+        # 将处理好的隐藏状态和细胞状态打包成元组，作为解码器第一步的初始输入
+        dec_init_state = (init_decoder_hidden, init_decoder_cell)
+        
         ###
         ### See the following docs, as you may need to use some of the following functions in your implementation:
         ###     Pack the padded sequence X before passing to the encoder:
@@ -222,8 +268,16 @@ class NMT(nn.Module):
         ###         which should be shape (b, src_len, h),
         ###         where b = batch size, src_len = maximum source length, h = hidden size.
         ###         This is applying W_{attProj} to h^enc, as described in the PDF.
+
+        # 将编码器的输出隐藏状态通过一个线性层进行投影
+        enc_hiddens_proj = self.att_projection(enc_hiddens)
+
         ###     2. Construct tensor `Y` of target sentences with shape (tgt_len, b, e) using the target model embeddings.
         ###         where tgt_len = maximum target sentence length, b = batch size, e = embedding size.
+
+        # 将target的词索引转换为词向量
+        Y = self.model_embeddings.target(target_padded)
+
         ###     3. Use the torch.split function to iterate over the time dimension of Y.
         ###         Within the loop, this will give you Y_t of shape (1, b, e) where b = batch size, e = embedding size.
         ###             - Squeeze Y_t into a tensor of dimension (b, e).
@@ -232,9 +286,34 @@ class NMT(nn.Module):
         ###               as well as the new combined output o_t.
         ###             - Append o_t to combined_outputs
         ###             - Update o_prev to the new o_t.
+
+        # 将目标序列沿着时间步维度切开，每次取出一个时间步的词向量
+        for Y_t in torch.split(Y, 1, dim = 0):
+            # 去掉长度为1的时间步维度
+            # Y_t形状为(batch_size, embed_size)
+            Y_t = Y_t.squeeze(dim = 0)
+            # 将当前时间步的目标词向量Y_t与上一个时间步的解码输出o_prev拼接在一起
+            Ybar_t = torch.cat([Y_t, o_prev], dim = -1)
+            dec_state, combined_output, _ = self.step(
+                # LSTM前向传播，输入Ybar_t和上一时刻状态dec_state得到新的隐藏状态h_t
+                Ybar_t = Ybar_t,
+                dec_state = dec_state,
+                # 利用新的h_t和enc_hiddens_proj计算注意力权重，得到上下文向量
+                enc_hiddens = enc_hiddens,
+                enc_hiddens_proj = enc_hiddens_proj,
+                # masks用于在计算注意力时屏蔽掉源句子中padding的部分
+                enc_masks = enc_masks,
+            )
+            combined_outputs.append(combined_output)
+            o_prev = combined_output
+
         ###     4. Use torch.stack to convert combined_outputs from a list length tgt_len of
         ###         tensors shape (b, h), to a single tensor shape (tgt_len, b, h)
         ###         where tgt_len = maximum target sentence length, b = batch size, h = hidden size.
+
+        # 将列表中收集的所有时间步的输出张量重新堆叠成一个完整的序列张量，形状为(tgt_len, batch_size, hidden_size)
+        combined_outputs = torch.stack(combined_outputs)
+
         ###
         ### Note:
         ###    - When using the squeeze() function make sure to specify the dimension you want to squeeze
@@ -251,9 +330,6 @@ class NMT(nn.Module):
         ###         https://pytorch.org/docs/stable/generated/torch.cat.html
         ###     Tensor Stacking:
         ###         https://pytorch.org/docs/stable/generated/torch.stack.html
-
-
-
 
 
 
@@ -293,8 +369,17 @@ class NMT(nn.Module):
         ### YOUR CODE HERE (~3 Lines)
         ### TODO:
         ###     1. Apply the decoder to `Ybar_t` and `dec_state`to obtain the new dec_state.
+
+        dec_state = self.decoder(Ybar_t, dec_state)
+
         ###     2. Split dec_state into its two parts (dec_hidden, dec_cell)
+
+        dec_hidden, dec_cell = dec_state
+
         ###     3. Compute the attention scores e_t, a Tensor shape (b, src_len).
+
+        e_t = (enc_hiddens_proj @ dec_hidden.unsqueeze(dim = -1)).squeeze(dim = -1)
+
         ###        Note: b = batch_size, src_len = maximum source length, h = hidden size.
         ###
         ###       Hints:
@@ -323,17 +408,32 @@ class NMT(nn.Module):
         ### YOUR CODE HERE (~6 Lines)
         ### TODO:
         ###     1. Apply softmax to e_t to yield alpha_t
+
+        alpha_t = torch.softmax(e_t, dim = -1)
+
         ###     2. Use batched matrix multiplication between alpha_t and enc_hiddens to obtain the
         ###         attention output vector, a_t.
         ###           - alpha_t is shape (b, src_len)
         ###           - enc_hiddens is shape (b, src_len, 2h)
         ###           - a_t should be shape (b, 2h)
         ###           - You will need to do some squeezing and unsqueezing.
+
+        a_t = (alpha_t.unsqueeze(dim = 1) @ enc_hiddens).squeeze(dim = 1)
+        
         ###     Note: b = batch size, src_len = maximum source length, h = hidden size.
         ###
         ###     3. Concatenate dec_hidden with a_t to compute tensor U_t
+
+        U_t = torch.cat([a_t, dec_hidden], dim = -1)
+
         ###     4. Apply the combined output projection layer to U_t to compute tensor V_t
+        
+        V_t = self.combined_output_projection(U_t)
+        
         ###     5. Compute tensor O_t by first applying the Tanh function and then the dropout layer.
+        
+        O_t = self.dropout(F.tanh(V_t))
+        
         ###
         ### Use the following docs to implement this functionality:
         ###     Softmax:
