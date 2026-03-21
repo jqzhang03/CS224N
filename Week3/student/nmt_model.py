@@ -378,6 +378,14 @@ class NMT(nn.Module):
 
         ###     3. Compute the attention scores e_t, a Tensor shape (b, src_len).
 
+        # squeeze如果不设置dim，则去掉张量中所有的一维维度，
+        # 如果设置dim，则只检查dim位置是否是一维，如果不是一维则报错，如果是一维则去掉该维度
+        # dim=-1就是说检查最后一维是不是1，如果是1则去掉，如果不是1则报错
+        # unsqueeze的作用是在dim位置插入一个大小为1的维度，该位置以前的维度依次往后移一位
+        # 如果dim是正数，则从前往后数第dim位插入大小为1的维度
+        # 如果dim是负数，则从后往前数第dim位插入大小为1的维度
+        # dim=0则在最前面插入大小为1的维度
+        # dim=-1则在最后面插入大小为1的维度
         e_t = (enc_hiddens_proj @ dec_hidden.unsqueeze(dim = -1)).squeeze(dim = -1)
 
         ###        Note: b = batch_size, src_len = maximum source length, h = hidden size.
@@ -465,6 +473,8 @@ class NMT(nn.Module):
         """
         enc_masks = torch.zeros(enc_hiddens.size(0), enc_hiddens.size(1), dtype=torch.float)
         for e_id, src_len in enumerate(source_lengths):
+            # 查找每个原句的长度，由于掩码的第二维是所有句子的最大长度，因此存在某些句子需要填充到指定长度，
+            # 将填充的部分设置为1，非填充的部分设置为0，即原句的单词均为0
             enc_masks[e_id, src_len:] = 1
         return enc_masks.to(self.device)
 

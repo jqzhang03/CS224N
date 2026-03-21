@@ -143,6 +143,17 @@ After setting up the cloud VM, you should turn it off while you work on the prog
 
 \end{parts}
 
+{\color{red} Solutions:
+
+注意力计算公式为：
+$$
+    \alpha_{t, i} = \frac{\exp(\be_{t,i})}{\sum_{1 \le j \le m} \exp(\be_{t, j})}
+$$
+其中$\be_{t, i}$指的是第t个解码隐藏状态对第i个编码隐藏状态的注意力分数，如果$\be_{t, i}$设置为$-\infty$，那么注意力权重将在softmax后变成0。
+
+对编码隐藏状态进行掩码处理，以防止查询向量(第t个解码隐藏状态)关注到填充的部分。
+}
+
 Now it's time to get things running! As noted earlier, we recommend that you develop the code on your personal computer.  Confirm that you are running in the proper conda environment and then execute the following command to train the model on your local machine:
     
 \begin{lstlisting}

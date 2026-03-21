@@ -1,10 +1,10 @@
 # Fdb version 4
-["xdvipdfmx"] 1773737628.90078 "main.xdv" "main.pdf" "main" 1773737629.25081 0
-  "main.xdv" 1773737628.86442 286252 ad204977f0922662223eaaf461a1085b "xelatex"
+["xdvipdfmx"] 1774064421.10246 "main.xdv" "main.pdf" "main" 1774064421.7427 0
+  "main.xdv" 1774064421.03464 288656 9f771cceb57d20fc108a7f5d91c0da9b "xelatex"
   (generated)
   "main.pdf"
   (rewritten before read)
-["xelatex"] 1773737628.15265 "/Users/zhangjinqi/Desktop/acm/learn/CS224N/Week3/a3_spr24_student_latex/main.tex" "main.xdv" "main" 1773737629.24952 0
+["xelatex"] 1774064419.74567 "/Users/zhangjinqi/Desktop/acm/learn/CS224N/Week3/a3_spr24_student_latex/main.tex" "main.xdv" "main" 1774064421.74011 0
   "/System/Library/Fonts/Menlo.ttc" 1756454353 2156036 ec05dfca6821d85440da0899493002c3 ""
   "/Users/zhangjinqi/Desktop/acm/learn/CS224N/Week3/a3_spr24_student_latex/main.tex" 1773737627.96282 4273 f76d554445559d2be3a18df07cd5c450 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -229,10 +229,10 @@
   "images/tensorboard_cpu.jpg" 1713525078 119625 9c0900b0719a6d6be5865c94f010c851 ""
   "images/tensorboard_gpu.jpg" 1713525078 184464 a6f6ddac41acea47fd071e54a02fab90 ""
   "macros.tex" 1713525078 757 2e3af130c6e14d49b4be429690ec9686 ""
-  "main.aux" 1773737628.86352 7911 d5c1f1ac4a3e327d842f770bb0238da2 "xelatex"
-  "main.out" 1773737628.71406 0 d41d8cd98f00b204e9800998ecf8427e "xelatex"
+  "main.aux" 1774064421.03329 7911 9a35966ca06740dc37c998647adf94ab "xelatex"
+  "main.out" 1774064420.7265 0 d41d8cd98f00b204e9800998ecf8427e "xelatex"
   "main.tex" 1773737627.96282 4273 f76d554445559d2be3a18df07cd5c450 ""
-  "q1.tex" 1773736717.36142 13661 4791f90f249a99e25493e063849a39e3 ""
+  "q1.tex" 1774064418.20374 14112 25bcfafaea9899171dde1cb098c86ad3 ""
   "q2.tex" 1713525078 10621 5e5f55f2adeb63ae112c0a2f3850f50e ""
   "std-macros.tex" 1713525078 11204 3ccbe10995adf29e39fb6e628340946b ""
   "submission.tex" 1713525078 835 5146193f012aae37d2bdc2045e23d1f9 ""
