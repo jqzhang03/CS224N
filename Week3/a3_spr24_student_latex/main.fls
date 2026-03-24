@@ -423,6 +423,9 @@ OUTPUT main.xdv
 INPUT ./images/tensorboard_cpu.jpg
 INPUT ./images/tensorboard_cpu.jpg
 INPUT ./images/tensorboard_cpu.jpg
+INPUT ./images/QQ20260323-181545.png
+INPUT ./images/QQ20260323-181545.png
+INPUT ./images/QQ20260323-181545.png
 INPUT q2.tex
 INPUT ./images/example_translation_beam.jpg
 INPUT ./images/example_translation_beam.jpg

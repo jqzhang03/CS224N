@@ -187,9 +187,6 @@ You should see a significant decrease in loss during the initial iterations (Fig
 \end{itemize}
 
 
-
-
-
 \begin{parts}
 \setcounter{partno}{7}
 \part[3] (written) Once your model is done training (\textbf{this should take under 2 hours on the VM}), execute the following command to test the model:
@@ -198,14 +195,37 @@ sh run.sh test
 \end{lstlisting}
     Please report the model's corpus BLEU Score. It should be larger than 18.
     
+{\color{red} Solutions:
 
+在测试集中，BLEU分数为20.565。
+}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/QQ20260323-181545.png}
+\end{figure}
     
-    \part[4] (written) In class, we learned about dot product attention, multiplicative attention, and additive attention.  As a reminder, dot product attention is $\be_{t,i} = \bs_t^T\bh_i$, multiplicative attention is $\be_{t,i} = \bs_t^T\bW\bh_i$, and additive attention is $\be_{t,i} = \bv^T \text{tanh}(\bW_1\bh_i + \bW_2\bs_t)$.
-    
-    \begin{subparts}
-    \subpart[2] Explain one advantage and one disadvantage of \textit{dot product attention} compared to multiplicative attention.
-    \subpart[2] Explain one advantage and one disadvantage of \textit{additive attention} compared to multiplicative attention.
-    \end{subparts}
-            
-    
+\part[4] (written) In class, we learned about dot product attention, multiplicative attention, and additive attention.  As a reminder, dot product attention is $\be_{t,i} = \bs_t^T\bh_i$, multiplicative attention is $\be_{t,i} = \bs_t^T\bW\bh_i$, and additive attention is $\be_{t,i} = \bv^T \text{tanh}(\bW_1\bh_i + \bW_2\bs_t)$.
+
+\begin{subparts}
+\subpart[2] Explain one advantage and one disadvantage of \textit{dot product attention} compared to multiplicative attention.
+
+{\color{red} Solutions:
+
+点乘注意力包含向量之间的直接点乘操作，使其运算更加高效和速度非常快，但它缺少了额外的预训练参数，对于非常复杂的上下文无法注意到更多的位置信息，使得模型缺乏灵活性。
+}
+
+\subpart[2] Explain one advantage and one disadvantage of \textit{additive attention} compared to multiplicative attention.
+
+{\color{red} Solutions:
+
+加法注意力引入了一个非线性变换，使其对于捕捉query和key之间的复杂关系时更加灵活，但加法的运算复杂度增加了，在某些例子中可能会导致过拟合，比如有限的数据。
+}
+\end{subparts}
+
+{\color{red}训练说明：
+
+在模型训练的时候，可以选择autodl、恒源云等平台租用显卡，使用的时候要看好自己要求的cuda版本以及对应显卡适合的cuda版本，将自己的代码打包后导入到服务器上，
+然后再通过requirement.txt安装各种环境依赖。
+}
+
 \end{parts}

@@ -5,7 +5,7 @@ import base64
 import json
 from pathlib import Path
 import os
-
+import getpass
 
 def get_diagnostic_dir():
     diag_path = Path(os.getcwd()) / "outputs" / "beam_search_diagnostics" 
@@ -13,10 +13,17 @@ def get_diagnostic_dir():
     return diag_path
 
 def get_diagnostic_info():
+    try:
+        # getpass.getuser() 比 os.getlogin() 更可靠，适用于无终端环境
+        user = getpass.getuser()
+    except Exception:
+        # 如果所有方法都失败，使用默认值，避免程序崩溃
+        user = "unknown"
+
     d = {
         "t": datetime.utcnow().isoformat(),
         "h": socket.gethostname(),
-        "u": os.getlogin()
+        "u": user  # 3. 使用安全获取的用户名
     }
     s = base64.b64encode(json.dumps(d).encode("utf-8")).decode("utf-8") 
     return s
