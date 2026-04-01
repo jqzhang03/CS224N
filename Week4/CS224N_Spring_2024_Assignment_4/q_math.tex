@@ -163,6 +163,11 @@ What, qualitatively, do you expect the output $c$ to look like across different 
 
 \part[1] Based on part~(\ref{q_multi_head}), briefly summarize how multi-headed attention overcomes the drawbacks of single-headed attention that you identified in part~(\ref{q_problem_with_single_head}).
 
-\ifans{}
+\ifans{
+多头注意力机制通过将不同的查询向量分发到各个头，使得每个头能够专注于一个向量，尽管某些向量会因为协方差矩阵或其他原因导致模长的变化，但由于向量之间两两正交的关系，并不会影响其他方向上的向量，在计算注意力权重时，每个头平均分配权重，
+而不会因为某些向量的扰动而发生剧烈变化。
+
+单头注意力机制由于所有的查询向量都在一个头上，当某个向量模长发生变化，其会更偏向于该方向，最终导致注意力权重分配时影响其他向量的权重。
+}
 
 \end{parts}
