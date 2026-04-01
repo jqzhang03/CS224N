@@ -95,7 +95,12 @@ Further, assume that the means $\mu_i$ are all perpendicular; $\mu_i^\top \mu_j 
 \subpart[2] Assume that the covariance matrices are $\Sigma_i = \alpha I, \forall i \in \{1, 2, \ldots, n\}$, for vanishingly small $\alpha$.
 Design a query $q$ in terms of the $\mu_i$ such that as before, $c\approx \frac{1}{2}(v_a + v_b)$, and provide a brief argument as to why it works.
 
-\ifans{}
+\ifans{
+为了使得注意力输出$c \approx \frac{1}{2}(v_a + v_b)$，令查询向量$q = \beta(\mu_a + \mu_b)$，其中$\beta \gg 1$，保证在n比较大的时候其他项依然趋于0
+
+由于协方差矩阵$\Sigma_i = \alpha I$中$\alpha$趋近于0，随机采样的k就会分布在$\mu$的周围，那么可以近似地认为$k_i \approx \mu_i$，注意力分数$score_i=q^\top k_i \approx q^\top \mu_i$，与上一个问题同理，因为向量之间两两正交，且模长都为1，
+因此$q^\top \mu$只有当$\mu$为a和b的时候才会有值，其他情况均为0，由于a和b的注意力分数等大，且远大于其他向量的注意力分数，因此最后Softmax函数后，a和b平均分总权重，其他向量权重接近于0。
+}
 
 \subpart[3] Though single-headed attention is resistant to small perturbations in the keys, some types of larger perturbations may pose a bigger issue. In some cases, one key vector $k_a$ may be larger or smaller in norm than the others, while still pointing in the same direction as $\mu_a$.\footnote{Unlike the original Transformer, newer Transformer models apply layer normalization before attention. In these pre-layernorm models, norms of keys cannot be too different which makes the situation in this question less likely to occur.}
 
@@ -110,7 +115,14 @@ As an example, let us consider a covariance for item $a$ as $\Sigma_a = \alpha I
 
 When you sample $\{k_1,\dots,k_n\}$ multiple times, and use the $q$ vector that you defined in part i., what do you expect the vector $c$ will look like qualitatively for different samples? Think about how it differs from part (i) and how $c$'s variance would be affected.
 
-\ifans{}
+\ifans{
+在本题当中，$k_a$的模长会产生一定的变化，使得$c$不在近似于稳定的$\frac{1}{2}(v_a + v_b)$，而是在$v_a$和$v_b$之间抖动，当$k_a$模长比较大的时候，$c$会更偏向于$v_a$，当$k_a$模长比较小的时候，$c$会更偏向于$v_b$。
+
+根据注意力分数公式$score_i=q^\top k_i$，$k_b$的分数基本恒定，但$k_a$的分数会在一定范围内跳动，并且协方差$\Sigma_a = \alpha I + \frac{1}{2}(\mu_a\mu_a^\top)$多了一个$\frac{1}{2}(\mu_a\mu_a^\top)$，意味着$k_a$在$\mu_a$方向上的投影长度会有显著的方差。
+
+最后Softmax函数后，由于a和b的注意力分数不再近似，那么注意力权重也会随着$k_a$模长的变化而变化。
+
+}
 \end{subparts}
 
 \part[3]\textbf{Benefits of multi-headed attention:} \label{q_multi_head}
@@ -127,14 +139,26 @@ Assume that the covariance matrices are $\Sigma_i=\alpha I$, for vanishingly sma
 Design $q_1$ and $q_2$ in terms of $\mu_i$ such that $c$ is approximately equal to $\frac{1}{2}(v_a+v_b)$. 
 Note that $q_1$ and $q_2$ should have different expressions.
 
-\ifans{}
+\ifans{
+令$q_1 = \mu_a$，$q_2 = \mu_b$
+
+因为向量之间两两正交，且向量的模长都是1，在多头注意力机制下，$q_1$和$q_2$会进入不同的头进行计算，头1的输出$c_1 \approx v_a$，头2的输出$c_2 \approx v_b$，多头注意力的输出是各个头的平均值，因此最终输出$c \approx \frac{1}{2}(v_a + v_b)$。
+
+在这种情况下，头1只会关注a，头2只会关注b，因此如果$k_a$的模长不稳定像前面单头注意力那样，也不会对头2中$k_b$的注意力分数产生影响。
+}
 
 \subpart[2]
 Assume that the covariance matrices are $\Sigma_a=\alpha I + \frac{1}{2}(\mu_a\mu_a^\top)$ for vanishingly small $\alpha$, and $\Sigma_i=\alpha I$  for all $i \neq a$.
 Take the query vectors $q_1$ and $q_2$ that you designed in part i.
 What, qualitatively, do you expect the output $c$ to look like across different samples of the key vectors? Explain briefly in terms of variance in $c_1$ and $c_2$. You can ignore cases in which $k_a^\top q_i < 0$.
 
-\ifans{}
+\ifans{
+根据$\Sigma_a=\alpha I + \frac{1}{2}(\mu_a\mu_a^\top)$，其中$q_1=\mu_a$专门针对a，那么$k_a$的协方差会在$\mu_a$方向上有较大的方差，导致$k_a$的模长产生波动。
+
+而对于头2来说，其主要关注$q_2=\mu_b$，$\k_a$的扰动在b方向上为0，因为向量之间两两正交的关系，无论$k_a$模长怎么变，都不会改变其在$\mu_b$方向上的投影，因此$c_2 \approx v_b$依然是稳定的。
+
+最后在Softmax函数中，头1虽然受到$k_a$的扰动，但其不关注$k_b$，头2才会关注$k_b$，因此即使$c_1$有轻微的扰动，$c_2$依然能够稳固提供$v_b$的信息，因此$c \approx \frac{1}{2}(v_a + v_b)$
+}
 \end{subparts}
 
 \part[1] Based on part~(\ref{q_multi_head}), briefly summarize how multi-headed attention overcomes the drawbacks of single-headed attention that you identified in part~(\ref{q_problem_with_single_head}).

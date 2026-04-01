@@ -1,18 +1,18 @@
 # Fdb version 4
-["bibtex main"] 1774838728.20702 "main.aux" "main.bbl" "main" 1774838729.55607 0
+["bibtex main"] 1775033646.62891 "main.aux" "main.bbl" "main" 1775033648.03764 0
   "./main.bib" 1774806166 1020 72556f0c4f61ffc227720f2f41631c59 ""
   "/usr/local/texlive/2025/texmf-dist/bibtex/bst/base/acm.bst" 1292289607 21064 c61a48664f3c347ce7f73c1a6a530506 ""
-  "main.aux" 1774838729.17109 5662 f7f4daf34c918e2cc2bdfc155a62d7ff "xelatex"
+  "main.aux" 1775033647.63238 5670 e231fd737a1ba3e9bf810bb41e78ae0c "xelatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["xdvipdfmx"] 1774838729.31642 "main.xdv" "main.pdf" "main" 1774838729.55748 0
-  "main.xdv" 1774838729.17203 315120 9001f3f87efc34b5918049056da26769 "xelatex"
+["xdvipdfmx"] 1775033647.7818 "main.xdv" "main.pdf" "main" 1775033648.03902 0
+  "main.xdv" 1775033647.63337 330224 a3b8a7aba910d7613619fc74205624cf "xelatex"
   (generated)
   "main.pdf"
   (rewritten before read)
-["xelatex"] 1774838728.26639 "/Users/zhangjinqi/Desktop/acm/learn/CS224N/Week4/CS224N_Spring_2024_Assignment_4/main.tex" "main.xdv" "main" 1774838729.55612 0
+["xelatex"] 1775033646.68738 "/Users/zhangjinqi/Desktop/acm/learn/CS224N/Week4/CS224N_Spring_2024_Assignment_4/main.tex" "main.xdv" "main" 1775033648.03769 0
   "/System/Library/Fonts/Menlo.ttc" 1756454353 2156036 ec05dfca6821d85440da0899493002c3 ""
   "/Users/zhangjinqi/Desktop/acm/learn/CS224N/Week4/CS224N_Spring_2024_Assignment_4/main.tex" 1774835761.65798 6843 c27c7ab398c7b786c29d2415be8f5801 ""
   "/usr/local/texlive/2025/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -254,12 +254,12 @@
   "/usr/local/texlive/2025/texmf.cnf" 1741450484 577 418a7058ec8e006d8704f60ecd22c938 ""
   "images/ka_plausible.png" 1774806166 14838 dae9f4d7b247a43a2e8c0ad8bfaf585b ""
   "macros.tex" 1774806166 709 5696d1400067c65129731f4c5f8a25d3 ""
-  "main.aux" 1774838729.17109 5662 f7f4daf34c918e2cc2bdfc155a62d7ff "xelatex"
-  "main.bbl" 1774838728.26432 795 17d9a6bf475d1bdec8be5d7f478a858f "bibtex main"
-  "main.out" 1774838728.86146 0 d41d8cd98f00b204e9800998ecf8427e "xelatex"
+  "main.aux" 1775033647.63238 5670 e231fd737a1ba3e9bf810bb41e78ae0c "xelatex"
+  "main.bbl" 1775033646.68536 795 17d9a6bf475d1bdec8be5d7f478a858f "bibtex main"
+  "main.out" 1775033647.32155 0 d41d8cd98f00b204e9800998ecf8427e "xelatex"
   "main.tex" 1774835761.65798 6843 c27c7ab398c7b786c29d2415be8f5801 ""
   "q_code.tex" 1774806166 18835 1a3c19bf2eaae1d5028ce5b52ea87c4b ""
-  "q_math.tex" 1774838726.91024 8885 1ee0807beb651c3ae3722fdc730b4ebe ""
+  "q_math.tex" 1775033645.27908 11574 661753139a7706dcb50a169aa90d80fb ""
   "q_pos_enc.tex" 1774806166 4599 63aae9b549cb5890cab3d87ddb0074ec ""
   "std-macros.tex" 1774806166 10443 b79d75a9ce312040a89e199f6d9a81e8 ""
   (generated)

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.27)  30 MAR 2026 10:45
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.12.27)  1 APR 2026 16:54
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1186,9 +1186,16 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 
 
-[3]) (./q_pos_enc.tex
+[3]
 
-[4]) (./q_code.tex
+LaTeX Warning: Command \k invalid in math mode on input line 161.
+
+Missing character: There is no ̨ ("328) in font cmmi7!
+
+
+[4]) (./q_pos_enc.tex
+
+[5]) (./q_code.tex
 Overfull \hbox (22.01712pt too wide) detected at line 29
 \TU/lmr/bx/n/15.05624 3. Pretrained Transformer models and knowledge access (35 points) 
  []
@@ -1233,29 +1240,28 @@ Package fontspec Info:
 (fontspec)             <->"STFangsong/OT:script=hani;language=dflt;"
 
 
-
-[5]
-
 LaTeX Font Warning: Font shape `TU/zi4/b/n' undefined
 (Font)              using `TU/zi4/m/n' instead on input line 42.
 
-(/usr/local/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
+
+
+[6] (/usr/local/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2024/09/23 1.10c listings language file
 ) (/usr/local/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2024/09/23 1.10c listings language file
 )
-
-[6]
 LaTeX Font Info:    Trying to load font information for T1+pcr on input line 88.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/psnfss/t1pcr.fd
 File: t1pcr.fd 2001/06/04 font definitions for T1/pcr.
 )
 
+[7]
+
 Package xcolor Warning: Incompatible color definition on input line 103.
 
 
 
-[7]
+[8]
 
 Package xcolor Warning: Incompatible color definition on input line 150.
 
@@ -1266,19 +1272,20 @@ Underfull \hbox (badness 10000) in paragraph at lines 155--156
 
 
 
-[8]
-
 [9]
 Overfull \hbox (43.12563pt too wide) in paragraph at lines 225--226
 []\TU/zi4/b/n/10.53937 In the provided code, RoPE is implemented using the functions precompute_rotary_emb
  []
 
 
+
+[10]
+
 Package xcolor Warning: Incompatible color definition on input line 250.
 
 
 
-[10])
+[11])
 Overfull \hbox (32.02615pt too wide) in paragraph at lines 183--184
 []\TU/zi4/b/n/10.53937 The no-pretraining model and predictions: vanilla.model.params, vanilla.nopretrain.dev.predictions, 
  []
@@ -1290,11 +1297,11 @@ Overfull \hbox (41.69075pt too wide) in paragraph at lines 185--186
 
 (./main.bbl)
 
-[11]
+[12]
 This exam contains 4 questions with 17 parts, 13 subparts, and 0 subsubparts.
 
 enddocument/afterlastpage (AED): lastpage setting LastPage.
-runsystem(latexminted cleantemp  --timestamp 20260330104528 FAD58DE7366495DB4650CFEFAC2FCD61)...executed safely (allowed).
+runsystem(latexminted cleantemp  --timestamp 20260401165406 FAD58DE7366495DB4650CFEFAC2FCD61)...executed safely (allowed).
 
 (./main.aux)
  ***********
@@ -1309,12 +1316,12 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 37735 strings out of 473832
- 801096 string characters out of 5729480
- 1628677 words of memory out of 5000000
- 60091 multiletter control sequences out of 15000+600000
+ 37748 strings out of 473832
+ 801903 string characters out of 5729480
+ 1626329 words of memory out of 5000000
+ 60104 multiletter control sequences out of 15000+600000
  571256 words of font info for 117 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 109i,16n,114p,1086b,1717s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 109i,16n,114p,1086b,2388s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on main.xdv (11 pages, 315120 bytes).
+Output written on main.xdv (12 pages, 330224 bytes).
