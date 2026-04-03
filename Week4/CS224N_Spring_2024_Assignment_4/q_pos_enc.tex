@@ -34,11 +34,57 @@ where $\mathbf{W}_1, \mathbf{W}_2 \in \mathbb{R}^{d \times d}$ and $\mathbf{b}_1
         You are given that for any permutation matrix $\mathbf{P}$ and any matrix $\mathbf{A}$, the following hold:
         $\text{softmax}(\mathbf{P}\mathbf{A}\mathbf{P}^{\top}) = \mathbf{P}\ \text{softmax}(\mathbf{A})\ \mathbf{P}^{\top} \quad \text{and}\quad \text{ReLU}(\mathbf{P}\mathbf{A}) = \mathbf{P}\ \text{ReLU}(\mathbf{A})$.
 
-        \ifans{}
+        \ifans{
+        由于输入的$\mathbf{X}$进行了一个$\mathbf{P}$变换，那么
+
+        $$
+            \mathbf{X}_{\text{new}} = \mathbf{P} \mathbf{X}
+        $$
+
+        因此可以得到
+
+        $$
+            \mathbf{Q} = \mathbf{X}_{\text{new}} \mathbf{W}_{Q} = \mathbf{P} \mathbf{X} \mathbf{W}_{Q}
+        $$
+
+        $$
+            \mathbf{K} = \mathbf{X}_{\text{new}} \mathbf{W}_{K} = \mathbf{P} \mathbf{X} \mathbf{W}_{K}
+        $$
+
+        $$
+            \mathbf{V} = \mathbf{X}_{\text{new}} \mathbf{W}_{V} = \mathbf{P} \mathbf{X} \mathbf{W}_{V}
+        $$
+
+        那么可以计算出$\mathbf{H}_{\text{new}}$
+
+        \begin{align*}
+            \mathbf{H}_{\text{new}} &= \text{softmax}(\frac{\mathbf{Q} \mathbf{K}^\top}{\sqrt{d}}) \mathbf{V} \\
+            &= \text{softmax}(\frac{\mathbf{P} \mathbf{X} \mathbf{W}_{Q} \mathbf{W}_{k}^\top \mathbf{X}^\top \mathbf{P}^\top}{\sqrt{d}}) \mathbf{P} \mathbf{X} \mathbf{W}_{V} \\
+            &= \text{softmax}(\mathbf{P} \frac{\mathbf{X} \mathbf{W}_{Q} (\mathbf{X} \mathbf{W}_{K})^\top}{\sqrt{d}} \mathbf{P}^\top) \mathbf{P} \mathbf{X} \mathbf{W}_{V} \\
+            &= \mathbf{P} \text{softmax}(\frac{\mathbf{Q} \mathbf{K}^\top}{\sqrt{d}}) \mathbf{P}^\top \mathbf{P} \mathbf{X} \mathbf{W}_{V} \\
+            &= \mathbf{P} \text{softmax}(\frac{\mathbf{Q} \mathbf{K}^\top}{\sqrt{d}}) \mathbf{V} \\
+            &= \mathbf{P} \mathbf{H}
+        \end{align*}
+
+        得到了$\mathbf{H}_{\text{new}}$以后，即可得到$\mathbf{Z}_{\text{new}}$
+
+        \begin{align*}
+            \mathbf{Z}_{\text{new}} &= \text{ReLU}(\mathbf{H}_{\text{new}} \mathbf{W}_{1} + \mathbf{1} \cdot \mathbf{b}_{1}) \mathbf{W}_{2} + \mathbf{1} \cdot \mathbf{b}_{2} \\
+            &= \text{ReLU}(\mathbf{P} \mathbf{H} \mathbf{W}_{1} + \mathbf{1} \cdot \mathbf{b}_{1}) \mathbf{W}_{2} + \mathbf{1} \cdot \mathbf{b}_{2} \\
+            &= \text{ReLU}(\mathbf{P} \mathbf{H} \mathbf{W}_{1} + \mathbf{P} \cdot \mathbf{1} \cdot \mathbf{b}_{1}) \mathbf{W}_{2} + \mathbf{1} \cdot \mathbf{b}_{2} \\
+            &= \text{ReLU}(\mathbf{P}(\mathbf{H} \mathbf{W}_{1} + \mathbf{1} \cdot \mathbf{b}_{1})) \mathbf{W}_{w} + \mathbf{1} \cdot \mathbf{b}_{2} \\
+            &= \mathbf{P} \text{ReLU}(\mathbf{H} \mathbf{W}_{1} + \mathbf{1} \cdot \mathbf{b}_{1}) \mathbf{W}_{2} + \mathbf{P} \cdot \mathbf{1} \cdot \mathbf{b}_{2} \\
+            &= \mathbf{P}(\text{ReLU}(\mathbf{H} \mathbf{W}_{1} + \mathbf{1} \cdot \mathbf{b}_{1}) \mathbf{W}_{2} + \mathbf{1} \cdot \mathbf{b}_{2}) \\
+            &= \mathbf{P} \mathbf{Z}
+        \end{align*}
+
+        }
 
         \subpart[1] Think about the implications of the result you derived in part i. \textbf{Explain} why this property of the Transformer model could be problematic when processing text.
 
-        \ifans{}
+        \ifans{
+            在输入$\mathbf{X}$的时候进行了重新排列，而在进入\text{Transformer}块前会进行位置嵌入，如果将输入的顺序打乱，会导致模型无法准确判断词之间的相对顺序，进而无法分析句子的语法结构和语义。
+        }
     \end{subparts}
 
     \part[2] \textbf{Position embeddings} are vectors that encode the position of each token in the sequence. They are added to the input word embeddings before feeding them into the Transformer.
@@ -58,10 +104,15 @@ where $\mathbf{W}_1, \mathbf{W}_2 \in \mathbb{R}^{d \times d}$ and $\mathbf{b}_1
     \begin{subparts}
         \subpart[1] Do you think the position embeddings will help the issue you identified in part (a)? If yes, explain how and if not, explain why not.
 
-        \ifans{}
+        \ifans{
+            位置嵌入会有所帮助。位置嵌入会将每一个位置的词单独加上一个独特的位置信息，有了独特的位置信息词与词之间就可以相互判断之间的距离，从而知道句子中词的先后顺序。
+        }
         \subpart[1] Can the position embeddings for two different tokens in the input sequence be the same? If yes, provide an example. If not, explain why not.
 
-        \ifans{}
+        \ifans{
+            采用不同基的位置编码，当基较小的时候容易发生碰撞现象，当基较大的时候则能够为不同的位置生成更具有唯一性的编码，这是由于位置信息是正弦、余弦函数，存在周期性，当嵌入维度d较小时，也有可能发生碰撞，
+            因为较高的角频率在低序维度中占据主导地位。
+        }
     \end{subparts}
 \end{parts}
 
